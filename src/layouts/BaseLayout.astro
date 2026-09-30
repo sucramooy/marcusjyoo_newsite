@@ -6,7 +6,7 @@ import '../styles/global.css';
 const { title, description, image, canonical, type, structuredData } = Astro.props;
 ---
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
   <head>
   <link rel="icon" href="/favicon.ico" sizes="any" />
 <link rel="icon" type="image/svg+xml" href="/favicons/favicon.svg" />
@@ -18,7 +18,7 @@ const { title, description, image, canonical, type, structuredData } = Astro.pro
   <meta name="theme-color" content="#0a0a0a" />
   </head>
   <body>
-    <a class="skip-link" href="#content">跳到正文</a>
+    <a class="skip-link" href="#content">skip</a>
     <Header />
     <main id="content"><slot /></main>
     <Footer />
