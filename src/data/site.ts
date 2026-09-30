@@ -26,7 +26,7 @@ export const site = {
     // 
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/marcusjyoo/' },
     { label: 'Instagram', href: 'https://www.instagram.com/marcus_artstuffs/' }, // if you post photography
-    { label: 'GitHub', href: 'https://github.com/YOUR_HANDLE' },  
+    { label: 'GitHub', href: 'https://github.com/sucramooy/marcusjyoo_newsite' },  
   ] as Array<{ label: string; href: string }>,
   features: {
     search: false,

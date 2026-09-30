@@ -31,7 +31,7 @@ function relative(entry) {
   return path.relative(root, entry.file);
 }
 
-const collections = ['writing', 'columns', 'projects', 'research', 'photos', 'links'];
+const collections = ['writing', 'columns', 'projects', 'research', 'photos', 'links', 'work'];
 const entries = new Map();
 for (const collection of collections) {
   const directory = path.join(contentRoot, collection);
@@ -43,7 +43,7 @@ for (const collection of collections) {
     }
     if (entry.data.locale && !['zh-cn', 'en'].includes(entry.data.locale)) errors.push(`${relative(entry)}: unsupported locale ${entry.data.locale}`);
     if (isDraft(entry)) continue;
-    if (['writing', 'projects', 'research'].includes(collection) && !entry.data.publishedAt) errors.push(`${relative(entry)}: missing publishedAt`);
+    if (['writing', 'research'].includes(collection) && !entry.data.publishedAt) errors.push(`${relative(entry)}: missing publishedAt`);
     if (collection === 'links' && !/^https?:\/\//.test(entry.data.url ?? '')) errors.push(`${relative(entry)}: url must use http(s)`);
     if (collection === 'photos') {
       const assets = [entry.data.cover, ...(Array.isArray(entry.data.photos) ? entry.data.photos.map((photo) => photo?.src) : [])].filter(Boolean);
@@ -85,10 +85,16 @@ function datePath(entry, collection) {
   const date = new Date(entry.data.publishedAt);
   return `/${collection}/${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${entrySlug(entry)}/`;
 }
-for (const collection of ['writing', 'projects', 'research']) {
+for (const collection of ['writing', 'research']) {
   for (const entry of entries.get(collection)) {
     if (!isDraft(entry) && entry.data.publishedAt) addPath(entry, datePath(entry, collection));
   }
+}
+for (const entry of entries.get('projects')) {
+  if (!isDraft(entry)) addPath(entry, `/projects/${entrySlug(entry)}/`);
+}
+for (const entry of entries.get('work')) {
+  if (!isDraft(entry)) addPath(entry, `/work/${entrySlug(entry)}/`);
 }
 for (const entry of entries.get('columns')) {
   if (!isDraft(entry)) addPath(entry, `/columns/${entry.data.slug || entrySlug(entry)}/`);
