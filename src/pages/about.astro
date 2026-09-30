@@ -1,0 +1,117 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../data/site';
+---
+
+<BaseLayout
+  title="About · Marcus J. Yoo"
+  description="Mechanical engineering student at Rose-Hulman. Product design, fabrication, and a life built around climbing."
+>
+  <article class="prose narrow container">
+    <header class="head">
+      <p class="eyebrow">About</p>
+      <h1>Marcus J. Yoo</h1>
+      <p class="dek">
+        Mechanical engineering student at Rose-Hulman Institute of Technology.
+        I design and build physical things, and I care about the process as much
+        as the result.
+      </p>
+    </header>
+
+    <section>
+      <p>
+        I'm a junior mechanical engineering student, and I'm looking for a 
+        <strong> Summer 2027 internship or a Spring/Summer co-op</strong>.
+      </p>
+      <p>
+        I treat design as a complementary discipline to engineering, it
+        sharpens how I think, how I communicate ideas visually, and how I bring
+        a creative edge to technical work. The projects I care about most are
+        the ones where the process is as interesting as the outcome, where you
+        can trace every decision from a constraint, a calculation, or a failed
+        prototype.
+      </p>
+    </section>
+
+    <section>
+      <h2>What I work on</h2>
+      <p>
+        My main project right now is the <a href="/projects/pcbrule/">PCBrule</a>,
+        a slide rule made from printed circuit board. What started as a
+        "wouldn't it be cool if" idea in high school has turned into real product
+        development mechanical design, GD&T, PCB layout, prototyping, and the
+        messy iteration in between.
+      </p>
+      <p>
+        Other work includes a removable fin attachment system for NASA USLI, a
+        DIY snowskate built from a recycled kids' ski with waterjet-cut mounting
+        plates, and an ESP32-based finger strength trainer for climbing. I also
+        interned at Boeing in flight performance engineering, developing tools
+        to analyze large-scale simulation data.
+      </p>
+    </section>
+
+    <section>
+      <h2>Outside of engineering</h2>
+      <p>
+        Climbing is a big part of my life. I don't see a version of my future
+        that doesn't include it in some way. The outdoors is where I reset, and
+        climbing is how I stay connected to it. I think it would be really awesome to work someplace who specializes in a field adjacent to climbing or the outdoors. I plan on getting both IRATA and SPRAT rope access certifications.
+      </p>
+      <p>
+        I like to write, both as a way of thinking through problems and as a way
+        of documenting what I'm working on. I'm involved with the Rose-Hulman
+        chapter of the Young Democratic Socialists of America, where I
+        co-founded the chapter and serve as Vice Chair. I think it's important, more than ever, to make an effort to understand what's happening in
+        the world at large, and to have the language to talk about it.
+      </p>
+    </section>
+
+    <section class="contact">
+      <h2>Contact</h2>
+      <p>
+        The best way to reach me is
+        <a href={`mailto:${site.author.email}`}>{site.author.email}</a>.
+      </p>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .container { max-width: 42rem; margin: 0 auto; padding: 5rem 1.5rem; }
+
+  .head { margin-bottom: 3rem; }
+  .head h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: .95;
+    letter-spacing: -.05em;
+    margin: .5rem 0 1rem;
+  }
+  .dek {
+    font-size: 1.2rem;
+    color: var(--muted);
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  section { margin-top: 3rem; }
+  section h2 {
+    font-size: 1.35rem;
+    letter-spacing: -.01em;
+    margin: 0 0 1rem;
+  }
+  p {
+    line-height: 1.7;
+    margin: 0 0 1rem;
+    color: var(--fg);
+  }
+  p:last-child { margin-bottom: 0; }
+  strong { font-weight: 600; }
+  a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .contact { margin-top: 4rem; padding-top: 3rem; border-top: 1px solid var(--line); }
+</style>

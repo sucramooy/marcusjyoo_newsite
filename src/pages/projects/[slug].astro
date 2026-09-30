@@ -1,0 +1,539 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublishedCollection, projectSlug } from '../../lib/content';
+import Icon from '../../components/chrome/Icon.astro';
+
+export async function getStaticPaths() {
+  const entries = await getPublishedCollection('projects');
+  return entries.map((entry) => ({
+    params: { slug: projectSlug(entry) },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const {
+  timeline,
+  specs,
+  challenges,
+  links,
+  support,
+  gallery,
+  heroImage,
+  heroPosition,
+  tags,
+} = entry.data;
+
+const base = import.meta.env.BASE_URL;
+const asset = (p?: string) => (p ? `${base}${p.replace(/^\//, '')}` : undefined);
+---
+
+<BaseLayout
+  title={`${entry.data.title} · Marcus J. Yoo`}
+  description={entry.data.description}
+  canonical={entry.data.canonical}
+  image={entry.data.ogImage}
+>
+  <article class="article narrow">
+    <p class="eyebrow">{entry.data.status} · {entry.data.type}</p>
+    <h1>{entry.data.title}</h1>
+    <p class="dek">{entry.data.description}</p>
+
+    {tags?.length > 0 && (
+      <ul class="tag-row">
+        {tags.map((tag) => <li>{tag}</li>)}
+      </ul>
+    )}
+
+    {heroImage && (
+      <div class="hero-image">
+        <img
+          src={asset(heroImage)}
+          alt={entry.data.title}
+          style={heroPosition ? `object-position: ${heroPosition}` : undefined}
+        />
+      </div>
+    )}
+
+    <div class="prose"><Content /></div>
+
+    {gallery?.length > 0 && (
+      <section class="block">
+        <h2>Gallery</h2>
+        <div class="gallery">
+          {gallery.map((src) => (
+            <button
+              type="button"
+              class="gallery-item"
+              data-src={asset(src)}
+            >
+              <img src={asset(src)} alt="" loading="lazy" />
+            </button>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {timeline?.length > 0 && (
+      <section class="block">
+        <h2>Development Timeline</h2>
+        <ol class="timeline">
+          {timeline.map((phase) => (
+            <li class={`phase phase-${phase.status}`}>
+              <span class="marker" aria-hidden="true" />
+              <div class="phase-body">
+                <div class="phase-head">
+                  <h3>{phase.phase}</h3>
+                  <span class={`badge badge-${phase.status}`}>
+                    {phase.status === 'completed' ? 'Completed'
+                      : phase.status === 'in-progress' ? 'In Progress'
+                      : 'Future'}
+                  </span>
+                </div>
+                <p>{phase.description}</p>
+                {phase.tags?.length > 0 && (
+                  <ul class="tag-row">
+                    {phase.tags.map((tag) => <li>{tag}</li>)}
+                  </ul>
+                )}
+                {phase.image && (
+                  <img
+                    class="phase-img"
+                    src={asset(phase.image)}
+                    alt={phase.phase}
+                    loading="lazy"
+                  />
+                )}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )}
+
+    {specs && Object.keys(specs).length > 0 && (
+      <section class="block">
+        <h2>Technical Specifications</h2>
+        <dl class="specs">
+          {Object.entries(specs).map(([k, v]) => (
+            <>
+              <dt>{k}</dt>
+              <dd>{v}</dd>
+            </>
+          ))}
+        </dl>
+      </section>
+    )}
+
+    {challenges?.length > 0 && (
+      <section class="block">
+        <h2>Current Challenges</h2>
+        <div class="challenges">
+          {challenges.map((c) => (
+            <div class="challenge">
+              <h3>{c.title}</h3>
+              <div class="pair">
+                <span class="pair-label">Problem</span>
+                <p class="pair-body">{c.problem}</p>
+              </div>
+              <div class="pair">
+                <span class="pair-label">Approach</span>
+                <p class="pair-body">{c.solution}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {support && (
+      <section class="block support">
+        <h2>{support.title}</h2>
+        {support.paragraphs.map((p) => (
+          <p>{p}</p>
+        ))}
+      </section>
+    )}
+
+    {links?.length > 0 && (
+      <section class="block cta-block">
+        <div class="cta-row">
+          {links.map((l, i) => (
+            <a
+              class={i === 0 ? 'btn btn-primary' : 'btn'}
+              href={l.url}
+              target="_blank"
+              rel="noopener"
+            >
+              {l.label}
+              <Icon name="arrowUpRight" size="sm" />
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+  </article>
+
+  <dialog id="lightbox" class="lightbox">
+    <button type="button" class="lightbox-close" aria-label="Close">×</button>
+    <img id="lightbox-img" src="" alt="" />
+  </dialog>
+</BaseLayout>
+
+<script>
+  const dialog = document.getElementById('lightbox') as HTMLDialogElement | null;
+  const dialogImg = document.getElementById('lightbox-img') as HTMLImageElement | null;
+
+  if (dialog && dialogImg) {
+    document.querySelectorAll<HTMLButtonElement>('.gallery-item').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const src = btn.dataset.src;
+        if (!src) return;
+        dialogImg.src = src;
+        dialog.showModal();
+      });
+    });
+
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+
+    dialog.addEventListener('close', () => {
+      dialogImg.src = '';
+    });
+  }
+</script>
+
+<style>
+  /* ─── Article shell ─────────────────────────────────── */
+  .article { padding: 5rem 0; }
+  .article h1 {
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    line-height: .95;
+    letter-spacing: -.06em;
+    margin: .5rem 0;
+  }
+  .dek {
+    font-size: 1.3rem;
+    color: var(--muted);
+    line-height: 1.4;
+    margin-bottom: 1rem;
+  }
+
+  /* ─── Tags ──────────────────────────────────────────── */
+  .tag-row {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .375rem;
+  }
+  .tag-row li {
+    font-size: .75rem;
+    padding: .125rem .5rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    background: transparent;
+    line-height: 1.6;
+  }
+
+  /* ─── Hero image ────────────────────────────────────── */
+  .hero-image {
+    margin: 2rem 0;
+    aspect-ratio: 5 / 3;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+  }
+  .hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* ─── Generic section block ─────────────────────────── */
+  .block {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--line);
+  }
+  .block h2 {
+    font-size: 1.75rem;
+    letter-spacing: -.02em;
+    margin: 0 0 1.5rem;
+  }
+
+  /* ─── Gallery ───────────────────────────────────────── */
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: .75rem;
+  }
+  .gallery-item {
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--soft, #f5f5f5);
+    cursor: zoom-in;
+    aspect-ratio: 16 / 9;
+    transition: border-color 150ms;
+  }
+  .gallery-item:hover { border-color: currentColor; }
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 300ms;
+  }
+  .gallery-item:hover img { transform: scale(1.03); }
+
+  /* ─── Lightbox ──────────────────────────────────────── */
+  .lightbox {
+    border: 0;
+    padding: 0;
+    background: transparent;
+    max-width: min(90vw, 1600px);
+    max-height: 90vh;
+    overflow: visible;
+  }
+  .lightbox::backdrop {
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(4px);
+  }
+  .lightbox img {
+    display: block;
+    max-width: 100%;
+    max-height: 90vh;
+    width: auto;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  }
+  .lightbox-close {
+    position: absolute;
+    top: -2.5rem;
+    right: 0;
+    background: transparent;
+    border: 0;
+    color: #fff;
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: .25rem .5rem;
+    opacity: .8;
+    transition: opacity 120ms;
+  }
+  .lightbox-close:hover { opacity: 1; }
+
+  /* ─── Timeline ──────────────────────────────────────── */
+  .timeline {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 1.5rem;
+    bottom: 1.5rem;
+    width: 1px;
+    background: var(--line);
+  }
+
+  .phase {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    position: relative;
+  }
+
+  .marker {
+    display: block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 2px solid var(--line);
+    background: var(--soft, transparent);
+    flex-shrink: 0;
+    margin-top: .4rem;
+    position: relative;
+    z-index: 1;
+    box-sizing: border-box;
+  }
+  .phase-completed .marker {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .phase-in-progress .marker {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+  .phase-future .marker {
+    background: var(--soft, transparent);
+    border-color: var(--line);
+  }
+
+  .phase-body { flex: 1; min-width: 0; }
+  .phase-head {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    flex-wrap: wrap;
+  }
+  .phase-head h3 { margin: 0; font-size: 1.15rem; }
+  .phase-body p {
+    margin: .5rem 0 0;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .phase-img {
+    display: block;
+    margin-top: 1rem;
+    max-width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+  }
+
+  /* ─── Status badges ─────────────────────────────────── */
+  .badge {
+    font-family: ui-monospace, monospace;
+    font-size: .6875rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: .125rem .5rem;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+    white-space: nowrap;
+  }
+  .badge-completed { color: #15803d; }
+  .badge-in-progress { color: var(--accent); }
+  .badge-future { color: var(--muted); }
+
+  @media (prefers-color-scheme: dark) {
+    .badge-completed { color: #4ade80; }
+  }
+
+  /* ─── Specs table ───────────────────────────────────── */
+  .specs {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: .5rem 1.5rem;
+    margin: 0;
+  }
+  .specs dt { color: var(--muted); }
+  .specs dd {
+    margin: 0;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ─── Challenges ────────────────────────────────────── */
+  .challenges {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+  .challenge h3 {
+    margin: 0 0 1.25rem;
+    font-size: 1.15rem;
+    letter-spacing: -.01em;
+  }
+  .challenge .pair {
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+  }
+  .challenge .pair + .pair {
+    margin-top: 1.25rem;
+  }
+  .challenge .pair-label {
+    font-family: ui-monospace, monospace;
+    font-size: .6875rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .challenge .pair-body {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  /* ─── Support section ───────────────────────────────── */
+  .support p {
+    margin: 0 0 1rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .support p:last-child { margin-bottom: 0; }
+
+  /* ─── CTA button row ────────────────────────────────── */
+  .cta-block {
+    border-top: 1px solid var(--line);
+    padding-top: 2.5rem;
+  }
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .625rem 1.125rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: .9375rem;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 120ms, background 120ms, opacity 120ms;
+  }
+  .btn:hover { border-color: currentColor; }
+  .btn-primary {
+    background: var(--accent);
+    color: #0a0a0a;
+    border-color: var(--accent);
+    font-weight: 500;
+  }
+  .btn-primary:hover {
+    opacity: .88;
+    border-color: var(--accent);
+  }
+
+  /* ─── Markdown body overrides ───────────────────────── */
+  .prose :global(.video-embed) {
+    aspect-ratio: 16 / 9;
+    margin: 2rem 0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .prose :global(.video-embed iframe) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .prose :global(img) {
+    display: block;
+    width: 100%;
+    margin: 2rem 0;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+  }
+</style>
