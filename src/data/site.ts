@@ -9,6 +9,7 @@ export const site = {
     'Sliderules, Snowskates and more.',
   url: siteUrl,
   author: {
+    name: 'Marcus J. Yoo',
     edu: 'Rose-Hulman Institute of Technology 2028',
     bio: 'I focus on solving complex challenges with real human impact. By treating design as a complementary discipline, I sharpen my ability to think differently, communicate ideas visually, and bring a creative edge to engineering innovation.',
     email: 'yoomj@rose-hulman.edu', // add your public email when ready, e.g. 'marcus@marcusjyoo.com'
