@@ -1,0 +1,11 @@
+{
+  "name": "marcusjyoo",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "./dist"
+  },
+  "routes": [
+    { "pattern": "marcusjyoo.com", "custom_domain": true },
+    { "pattern": "www.marcusjyoo.com", "custom_domain": true }
+  ]
+}

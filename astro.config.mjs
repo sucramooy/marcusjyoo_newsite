@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap';
 const basePath = process.env.BASE_PATH ?? '/';
 
 export default defineConfig({
-  site: process.env.SITE_URL ?? 'https://example.org',
+  site: process.env.SITE_URL ?? 'https://marcusjyoo.com',
   base: basePath,
   output: 'static',
   trailingSlash: 'always',
@@ -14,5 +14,8 @@ export default defineConfig({
       themes: { light: 'github-light', dark: 'github-dark' },
       wrap: true,
     },
+  },
+  redirects: {
+    '/pcbrule': '/projects/pcbrule/',
   },
 });
