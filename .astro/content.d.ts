@@ -137,7 +137,7 @@ declare module 'astro:content' {
   id: string;
   body?: string;
   collection: "photos";
-  data: InferEntrySchema<"photos">;
+  data: any;
   rendered?: RenderedContent;
   filePath?: string;
   digest?: string | number;

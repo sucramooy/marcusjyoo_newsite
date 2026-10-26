@@ -5,7 +5,6 @@ import { sitePath } from './urls';
 
 export type Writing = CollectionEntry<'writing'>;
 export type Project = CollectionEntry<'projects'>;
-export type Photo = CollectionEntry<'photos'>;
 
 /* ─── Loaders ─────────────────────────────────────────────── */
 
@@ -27,7 +26,10 @@ export async function getPublishedCollection<T extends CollectionKey>(
 ): Promise<CollectionEntry<T>[]> {
   return getCollection(
     name,
-    ({ data }) => !data.draft && data.locale === locale,
+    ({ data }) => {
+      const d = data as any;
+      return !d.draft && d.locale === locale;
+    },
   ) as Promise<CollectionEntry<T>[]>;
 }
 
@@ -61,12 +63,6 @@ export function writingPath(entry: Writing) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   return sitePath(`/writing/${year}/${month}/${slugFromId(entry.id)}/`);
-}
-
-
-
-export function photoPath(entry: Photo) {
-  return sitePath(`/photos/${entry.data.slug}/`);
 }
 
 export type Work = CollectionEntry<'work'>;

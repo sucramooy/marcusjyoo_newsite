@@ -123,4 +123,4 @@ const work = defineCollection({
 
 
 
-export const collections = { writing, projects, photos, pages, work };
+export const collections = { writing, projects, pages, work };
