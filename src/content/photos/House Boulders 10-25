@@ -1,0 +1,14 @@
+---
+title: "House Boulders 11/25"
+date: 2026-10-01
+cover: "/images/photography/landscapes/01.jpg"
+photos:
+  - src: "/images/photography/landscapes/01.jpg"
+    width: 4000
+    height: 6000
+    alt: "Mountain peak at sunrise"
+  - src: "/images/photography/landscapes/02.jpg"
+    width: 6000
+    height: 4000
+    alt: "River valley"
+---

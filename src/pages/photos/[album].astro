@@ -1,0 +1,86 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+import { imageSize } from 'image-size';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import JustifiedGallery from '../../components/JustifiedGallery.astro';
+
+export async function getStaticPaths() {
+  const photographyDir = path.join(process.cwd(), 'public', 'images', 'photography');
+  
+  if (!fs.existsSync(photographyDir)) return [];
+
+  // Get all subfolders inside the photography directory
+  const folders = fs.readdirSync(photographyDir, { withFileTypes: true })
+    .filter((dirent) => dirent.isDirectory())
+    .map((dirent) => dirent.name);
+
+  return folders.map((folder) => ({
+    params: { album: folder },
+    props: { album: folder },
+  }));
+}
+
+const { album } = Astro.props;
+const albumDir = path.join(process.cwd(), 'public', 'images', 'photography', album);
+
+// Get all images in the specific folder
+const files = fs.readdirSync(albumDir).filter((file) => 
+  /\.(jpe?g|png|webp)$/i.test(file)
+);
+
+// Read dimensions for every image automatically
+const photos = files.map((file) => {
+  const filePath = path.join(albumDir, file);
+  const dimensions = imageSize(fs.readFileSync(filePath));
+  
+  return {
+    src: `/images/photography/${album}/${file}`,
+    width: dimensions.width || 4000,
+    height: dimensions.height || 6000,
+    alt: file.replace(/\.[^/.]+$/, ""), // Use filename as alt text
+  };
+});
+
+// Format "House-Boulders_10-25" to "House/Boulders 10/25"
+const cleanTitle = album.replace(/-/g, '/').replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
+const title = cleanTitle.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+---
+
+<BaseLayout title={title}>
+  <article class="album-container">
+    <header class="album-header">
+      <p class="eyebrow">Photography</p>
+      <h1 class="huge-title">{title}</h1>
+      <p class="meta">{photos.length} frames</p>
+    </header>
+    
+    <JustifiedGallery photos={photos} />
+  </article>
+</BaseLayout>
+
+<style>
+  .album-container {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 5rem 1.5rem;
+  }
+  
+  .album-header {
+    margin-bottom: 3rem;
+  }
+  
+  .huge-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem) !important;
+    line-height: .95 !important;
+    letter-spacing: -.05em !important;
+    margin: .5rem 0 1rem !important;
+  }
+  
+  .meta {
+    font-family: ui-monospace, monospace;
+    font-size: .75rem;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+</style>

@@ -89,18 +89,17 @@ const projects = defineCollection({
 const photos = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/photos' }),
   schema: z.object({
-    ...common,
-    slug: z.string().regex(/^[^/?#]+$/),
-    cover: z.string().optional(),
-    photos: z
-      .array(
-        z.object({
-          src: z.string(),
-          alt: z.string(),
-          caption: z.string().optional(),
-        }),
-      )
-      .default([]),
+    title: z.string(),
+    date: z.coerce.date(),
+    cover: z.string(),
+    private: z.boolean().default(false),
+    photos: z.array(z.object({
+      src: z.string(), // Path to the full-res image in /public
+      width: z.number(), // Original width (e.g., 4000)
+      height: z.number(), // Original height (e.g., 6000)
+      alt: z.string(),
+      caption: z.string().optional(),
+    })).default([]),
   }),
 });
 

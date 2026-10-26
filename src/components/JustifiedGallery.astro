@@ -1,0 +1,82 @@
+---
+interface Props {
+  photos: {
+    src: string;
+    width: number;
+    height: number;
+    alt: string;
+  }[];
+}
+
+const { photos } = Astro.props;
+
+// Generates the Cloudflare 1600px height optimized URL
+function getCloudflareUrl(src: string, height = 1600) {
+  return `/cdn-cgi/image/height=${height},format=auto,quality=80${src}`;
+}
+---
+
+<div class="justified-gallery">
+  {photos.map((photo) => {
+    const aspectRatio = photo.width / photo.height;
+    
+    return (
+      <a 
+        href={photo.src} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        class="gallery-item"
+        style={`flex-grow: ${aspectRatio};`}
+      >
+        <img
+          src={getCloudflareUrl(photo.src)}
+          alt={photo.alt}
+          width={photo.width}
+          height={photo.height}
+          loading="lazy"
+          class="gallery-img"
+        />
+      </a>
+    );
+  })}
+</div>
+
+<style>
+  .justified-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .justified-gallery::after {
+    content: '';
+    flex-grow: 1000000000;
+  }
+
+  .gallery-item {
+    height: 320px; /* Height of the rows */
+    flex-grow: 1;
+    overflow: hidden;
+    border-radius: 4px;
+    background-color: var(--soft, #1a1a1a);
+  }
+
+  .gallery-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .gallery-item:hover .gallery-img {
+    transform: scale(1.02);
+    opacity: 0.9;
+  }
+
+  @media (max-width: 768px) {
+    .gallery-item {
+      height: 200px;
+    }
+  }
+</style>
