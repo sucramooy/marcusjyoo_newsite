@@ -10,7 +10,6 @@ export async function getStaticPaths() {
   
   if (!fs.existsSync(photographyDir)) return [];
 
-  // Get all subfolders inside the photography directory
   const folders = fs.readdirSync(photographyDir, { withFileTypes: true })
     .filter((dirent) => dirent.isDirectory())
     .map((dirent) => dirent.name);
@@ -24,12 +23,10 @@ export async function getStaticPaths() {
 const { album } = Astro.props;
 const albumDir = path.join(process.cwd(), 'public', 'images', 'photography', album);
 
-// Get all images in the specific folder
 const files = fs.readdirSync(albumDir).filter((file) => 
   /\.(jpe?g|png|webp)$/i.test(file)
 );
 
-// Read dimensions for every image automatically
 const photos = files.map((file) => {
   const filePath = path.join(albumDir, file);
   const dimensions = imageSize(fs.readFileSync(filePath));
@@ -38,17 +35,17 @@ const photos = files.map((file) => {
     src: `/images/photography/${album}/${file}`,
     width: dimensions.width || 4000,
     height: dimensions.height || 6000,
-    alt: file.replace(/\.[^/.]+$/, ""), // Use filename as alt text
+    alt: file.replace(/\.[^/.]+$/, ""),
   };
 });
 
-// Format "House-Boulders_10-25" to "House/Boulders 10/25"
 const cleanTitle = album.replace(/-/g, '/').replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
 const title = cleanTitle.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 ---
 
 <BaseLayout title={title}>
-  <article class="album-container">
+  <!-- Added "container" class here to match the rest of the site -->
+  <article class="container album-container">
     <header class="album-header">
       <p class="eyebrow">Photography</p>
       <h1 class="huge-title">{title}</h1>
@@ -60,10 +57,11 @@ const title = cleanTitle.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice
 </BaseLayout>
 
 <style>
+  /* Removed the max-width so it inherits the theme's standard width */
   .album-container {
-    max-width: 80rem;
+    padding-top: 5rem;
+    padding-bottom: 5rem;
     margin: 0 auto;
-    padding: 5rem 1.5rem;
   }
   
   .album-header {
