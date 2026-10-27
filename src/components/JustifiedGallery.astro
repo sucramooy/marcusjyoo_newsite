@@ -10,15 +10,18 @@ interface Props {
 
 const { photos } = Astro.props;
 
-// Generates the Cloudflare 1600px height optimized URL
-function getCloudflareUrl(src: string, height = 1600) {
-  return `/cdn-cgi/image/height=${height},format=auto,quality=80${src}`;
+function getCloudflareUrl(src: string, width = 1600) {
+  if (import.meta.env.PROD) {
+    return `/cdn-cgi/image/width=${width},format=auto,quality=80${src}`;
+  }
+  return src;
 }
 ---
 
-<div class="justified-gallery">
+<div class="gallery-grid">
   {photos.map((photo) => {
-    const aspectRatio = photo.width / photo.height;
+    // Calculate the aspect ratio (e.g., 4000/6000 = 0.66, 6000/4000 = 1.5)
+    const ratio = photo.width / photo.height;
     
     return (
       <a 
@@ -26,7 +29,7 @@ function getCloudflareUrl(src: string, height = 1600) {
         target="_blank" 
         rel="noopener noreferrer" 
         class="gallery-item"
-        style={`flex-grow: ${aspectRatio};`}
+        style={`--ratio: ${ratio}`}
       >
         <img
           src={getCloudflareUrl(photo.src)}
@@ -42,41 +45,57 @@ function getCloudflareUrl(src: string, height = 1600) {
 </div>
 
 <style>
-  .justified-gallery {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .justified-gallery::after {
-    content: '';
-    flex-grow: 1000000000;
+  /* ─── Mobile: 1 Column, Full Width, No Crop ─────────── */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .gallery-item {
-    height: 320px; /* Height of the rows */
-    flex-grow: 1;
+    display: block;
+    border-radius: 6px;
     overflow: hidden;
-    border-radius: 4px;
     background-color: var(--soft, #1a1a1a);
   }
 
   .gallery-img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto; /* Natural height, no cropping */
     display: block;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition: opacity 0.2s ease;
+  }
+
+  /* ─── Desktop/Tablet: Justified Rows, No Crop ───────── */
+  @media (min-width: 768px) {
+    .gallery-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .gallery-item {
+      /* 
+        1. flex-grow based on the ratio ensures all images in a row 
+           perfectly share the height.
+        2. flex-basis determines when to wrap to the next row.
+      */
+      flex-grow: var(--ratio);
+      flex-basis: calc(var(--ratio) * 350px);
+      min-width: calc(var(--ratio) * 150px); 
+    }
+
+    /* 
+      This invisible element absorbs the extra width on the last row 
+      so the final images don't stretch to fill the whole screen.
+    */
+    .gallery-grid::after {
+      content: "";
+      flex-grow: 100000;
+    }
   }
 
   .gallery-item:hover .gallery-img {
-    transform: scale(1.02);
-    opacity: 0.9;
-  }
-
-  @media (max-width: 768px) {
-    .gallery-item {
-      height: 200px;
-    }
+    opacity: 0.85;
   }
 </style>

@@ -15,7 +15,6 @@ const albums = fs.existsSync(photographyDir)
 
 const albumData = albums.map(album => {
   const albumDir = path.join(photographyDir, album);
-  // Look for images in the folder
   const files = fs.readdirSync(albumDir).filter(f => /\.(jpe?g|png|webp)$/i.test(f));
   
   // Format "House-Boulders_10-25" to "House/Boulders 10/25"
@@ -29,10 +28,9 @@ const albumData = albums.map(album => {
   };
 });
 
-// Helper to use Cloudflare in production, but raw images in local dev
 const getCoverUrl = (cover: string) => {
   if (import.meta.env.PROD) {
-    return `/cdn-cgi/image/height=800,format=auto,quality=80${cover}`;
+    return `/cdn-cgi/image/height=1200,format=auto,quality=80${cover}`;
   }
   return cover;
 };
@@ -44,16 +42,15 @@ const getCoverUrl = (cover: string) => {
 >
   <header class="page-head container">
     <p class="eyebrow">Photography</p>
-    <h1 class="huge-title">Photos and stuff.</h1>
+    <h1 class="huge-title">35mm.</h1>
     
     {albumData.length > 0 ? (
       <p class="intro">
-        Collection of albums to share with friends because lightroom doesn't allow full res viewing and downloads from the web gallery. 
+        A collection of film and digital photography.
       </p>
     ) : (
       <p class="intro">
-        I haven't uploaded my photography to this page yet. For now,
-        have a look at my Instagram:
+        Have a look at my Instagram:
       </p>
     )}
 
@@ -91,11 +88,10 @@ const getCoverUrl = (cover: string) => {
 </BaseLayout>
 
 <style>
-  /* ─── Header ────────────────────────────────────────── */
   .page-head { padding: 5rem 0 3rem; }
   
   .huge-title {
-    font-size: clamp(3rem, 8vw, 6rem) !important; /* Forces it to match the projects page */
+    font-size: clamp(3rem, 8vw, 6rem) !important;
     line-height: .95 !important;
     letter-spacing: -.05em !important;
     max-width: 50rem;
@@ -119,9 +115,21 @@ const getCoverUrl = (cover: string) => {
   /* ─── Album Grid ────────────────────────────────────── */
   .album-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: 1fr; /* Mobile */
     gap: 2rem;
     padding-bottom: 5rem;
+  }
+
+  @media (min-width: 768px) {
+    .album-grid {
+      grid-template-columns: repeat(2, 1fr); /* Tablet: 2 cols */
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .album-grid {
+      grid-template-columns: repeat(3, 1fr); /* Desktop: 3 cols */
+    }
   }
 
   .album-card {
@@ -135,10 +143,10 @@ const getCoverUrl = (cover: string) => {
     transform: translateY(-2px);
   }
 
-  /* The wrapper ensures the box stays 4:5 even if the image is missing */
+  /* Vertical 2:3 aspect ratio for album covers */
   .album-media {
     width: 100%;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 2 / 3;
     border-radius: 8px;
     border: 1px solid var(--line);
     background: var(--soft, #1a1a1a);
@@ -156,7 +164,7 @@ const getCoverUrl = (cover: string) => {
   .album-media img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; /* Crops only the album cover to make it perfectly vertical */
     display: block;
   }
 
