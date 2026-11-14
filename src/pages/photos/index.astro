@@ -9,7 +9,8 @@ const instagram = site.social.find((s) => s.label.toLowerCase() === 'instagram')
 const photographyDir = path.join(process.cwd(), 'public', 'images', 'photography');
 const albums = fs.existsSync(photographyDir) 
   ? fs.readdirSync(photographyDir, { withFileTypes: true })
-      .filter((d) => d.isDirectory())
+      // ONLY include directories that do NOT start with '_'
+      .filter((d) => d.isDirectory() && !d.name.startsWith('_'))
       .map((d) => d.name)
   : [];
 
