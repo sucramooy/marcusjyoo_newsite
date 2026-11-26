@@ -102,11 +102,11 @@ links:
 
 I was a freshman in high school when I first learned what a slide rule was. My FIRST robotics mentor brought a slide rule to a meeting one day and I was blown away by the magic math stick and what it could do.
 
-I've always been attracted to purely mechanical things — I love analog photography because I find it really neat that you can produce an image using only gears, curtains, levers, glass, and chemistry. My favorite school supply throughout high school was a cherry red DigiKey PCB ruler — there was a satisfying quality about the gold lettering and just how durable it was.
+I've always been attracted to purely mechanical things, I love analog photography because I find it really neat that you can produce an image using only gears, curtains, levers, glass, and chemistry. My favorite school supply throughout high school was a cherry red DigiKey PCB ruler. There was a satisfying quality about the gold lettering and just how durable it was.
 
 Since then, I've had a nagging idea in my head: *"Wouldn't it be awesome if you made a slide rule out of Printed Circuit Board?"*
 
-Now as a student in university I am finally acting on that idea — and it is pretty awesome in my opinion.
+Now as a student in university I am finally acting on that idea. And it is pretty awesome in my opinion.
 
 ## Inspiration
 
@@ -120,9 +120,9 @@ Selling them and bringing it to market was mostly an afterthought.
 
 ## Wait, what's a slide rule?
 
-A slide rule is a mechanical calculator — engineers used them before the advent of digital computers. It is a tool that operates on the principle of adding together logarithms.
+A slide rule is a mechanical calculator  engineers used them before the advent of digital computers. It is a tool that operates on the principle of adding together logarithms.
 
-The Apollo astronauts carried a Pickett N600-ES to the moon, and the PCBrule is modeled after that very same design — with identical scales and calculation capabilities. Its layout has been time tested and literally approved by NASA.
+The Apollo astronauts carried a Pickett N600-ES to the moon, and the PCBrule is modeled after that very same design, with identical scales and calculation capabilities. Its layout has been time tested and literally approved by NASA.
 
 ## Current Prototype Demonstration
 
@@ -138,10 +138,10 @@ The Apollo astronauts carried a Pickett N600-ES to the moon, and the PCBrule is 
 
 ## Upcoming Prototype Iterations
 
-- **Mechanical redesign of cursor guidance system** — Engineering cursor rails and guides to eliminate acrylic surface contact
-- **Polycarbonate window prototyping and testing** — Sourcing and machining polycarbonate alternatives for durability testing
-- **Friction and smoothness optimization** — Testing different materials and coatings for optimal slide feel
-- **Long-term durability testing** — Stress testing the updated design for wear patterns and reliability
-- **Shim manufacturing jig** — Developing a jig to assist in punching and cutting of 0.1 mm stainless steel shim pieces
-- **Bow spring bending jig** — Making a device to repeatably and consistently bend the phosphor bronze cursor springs
+- **Mechanical redesign of cursor guidance system** - Engineering cursor rails and guides to eliminate acrylic surface contact
+- **Polycarbonate window prototyping and testing** - Sourcing and machining polycarbonate alternatives for durability testing
+- **Friction and smoothness optimization** - Testing different materials and coatings for optimal slide feel
+- **Long-term durability testing** - Stress testing the updated design for wear patterns and reliability
+- **Shim manufacturing jig** - Developing a jig to assist in punching and cutting of 0.1 mm stainless steel shim pieces
+- **Bow spring bending jig** - Making a device to repeatably and consistently bend the phosphor bronze cursor springs
 
